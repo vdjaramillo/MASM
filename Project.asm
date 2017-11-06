@@ -1,7 +1,8 @@
 INCLUDE Irvine32.inc
 ExitProcess proto,dwExitCode:dword
 .data
-cantidad1 DWORD 0,0
+cantidad DWORD 0
+cantidad1 DWORD 0
 Nododistancia DD 2
 Nodcon DD ?
 Nodos DD ?
@@ -21,38 +22,45 @@ main2 PROC
 	mov edx, OFFSET digiten
 	call WriteString
 	call ReadInt
-	mov cantidad1[0], eax
+	mov cantidad1, eax
 	mov esi, 0
-	mov ecx, cantidad1[0]
 	L1: ;recorrido del vector que contiene los nodos
-		mov auxanodos[0], ecx
 		mov auxanodos[1], esi
 		mov esi, 0
 		mov edx, OFFSET digiten2
 		call WriteString
 		call ReadInt
-		mov cantidad1[1], eax
+		mov cantidad, eax
 		mov ecx, eax
-
+		mov esi,0
 		L2: ;recorrido del arreglo que contiene las características (Nodos conectados, Distancia a nodos)
-			
-			mov edx, OFFSET digiten3
-			call WriteString
-			call Crlf
-			call ReadInt
-			
-
-			mov edx, OFFSET digiten4
-			call WriteString
-			call Crlf
-			call ReadInt
-
+			jmp E3
+			E4:
 		loop L2
-
-		inc esi
-		mov ecx, auxanodos[0]
+		mov ebx, OFFSET Nodcon
+		mov Nodos, ebx
 		mov esi, auxanodos[1]
-	loop L1
+		inc esi
+		dec cantidad1
+		cmp cantidad1,0
+		jne L1
+
 	exit
+	E3:
+		mov edx, OFFSET digiten3
+		call WriteString
+		call Crlf
+		call ReadInt
+		mov Nododistancia[0],eax
+		mov edx, OFFSET digiten4
+		call WriteString
+		call Crlf
+		call ReadInt
+		mov Nododistancia[1],eax
+		mov ebx, OFFSET Nododistancia
+		mov Nodcon[esi], ebx
+		inc esi
+	jmp E4
+
 main2 ENDP
 END main2
