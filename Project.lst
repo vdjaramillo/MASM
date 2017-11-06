@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    11/06/17 17:08:37
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    11/06/17 18:46:48
 Project.asm						     Page 1 - 1
 
 
@@ -22,8 +22,8 @@ Project.asm						     Page 1 - 1
 			      C 
 				ExitProcess proto,dwExitCode:dword
  00000000			.data
- 00000000 00000000		cantidad1 DWORD 0,0
-	   00000000
+ 00000000 00000000		cantidad DWORD 0
+ 00000004 00000000		cantidad1 DWORD 0
  00000008 00000002		Nododistancia DD 2
  0000000C 00000000		Nodcon DD ?
  00000010 00000000		Nodos DD ?
@@ -67,44 +67,52 @@ Project.asm						     Page 1 - 1
  00000000  BA 00000014 R		mov edx, OFFSET digiten
  00000005  E8 00000000 E		call WriteString
  0000000A  E8 00000000 E		call ReadInt
- 0000000F  A3 00000000 R		mov cantidad1[0], eax
+ 0000000F  A3 00000004 R		mov cantidad1, eax
  00000014  BE 00000000			mov esi, 0
- 00000019  8B 0D 00000000 R		mov ecx, cantidad1[0]
- 0000001F				L1: ;recorrido del vector que contiene los nodos
- 0000001F  89 0D 0000009A R			mov auxanodos[0], ecx
- 00000025  89 35 0000009B R			mov auxanodos[1], esi
- 0000002B  BE 00000000				mov esi, 0
- 00000030  BA 00000032 R			mov edx, OFFSET digiten2
- 00000035  E8 00000000 E			call WriteString
- 0000003A  E8 00000000 E			call ReadInt
- 0000003F  A3 00000001 R			mov cantidad1[1], eax
- 00000044  8B C8				mov ecx, eax
+ 00000019				L1: ;recorrido del vector que contiene los nodos
+ 00000019  89 35 0000009B R			mov auxanodos[1], esi
+ 0000001F  BE 00000000				mov esi, 0
+ 00000024  BA 00000032 R			mov edx, OFFSET digiten2
+ 00000029  E8 00000000 E			call WriteString
+ 0000002E  E8 00000000 E			call ReadInt
+ 00000033  A3 00000000 R			mov cantidad, eax
+ 00000038  8B C8				mov ecx, eax
+ 0000003A  BE 00000000				mov esi,0
+ 0000003F					L2: ;recorrido del arreglo que contiene las características (Nodos conectados, Distancia a nodos)
+ 0000003F  EB 2A					jmp E3
+ 00000041						E4:
+ 00000041  E2 FC				loop L2
+ 00000043  BB 0000000C R			mov ebx, OFFSET Nodcon
+ 00000048  89 1D 00000010 R			mov Nodos, ebx
+ 0000004E  8B 35 0000009B R			mov esi, auxanodos[1]
+ 00000054  46					inc esi
+ 00000055  FF 0D 00000004 R			dec cantidad1
+ 0000005B  83 3D 00000004 R			cmp cantidad1,0
+	   00
+ 00000062  75 B5				jne L1
 
- 00000046					L2: ;recorrido del arreglo que contiene las características (Nodos conectados, Distancia a nodos)
-							
- 00000046  BA 00000059 R				mov edx, OFFSET digiten3
- 0000004B  E8 00000000 E				call WriteString
- 00000050  E8 00000000 E				call Crlf
- 00000055  E8 00000000 E				call ReadInt
-							
-
- 0000005A  BA 00000072 R				mov edx, OFFSET digiten4
- 0000005F  E8 00000000 E				call WriteString
- 00000064  E8 00000000 E				call Crlf
- 00000069  E8 00000000 E				call ReadInt
-
- 0000006E  E2 D6				loop L2
-
- 00000070  46					inc esi
- 00000071  8B 0D 0000009A R			mov ecx, auxanodos[0]
- 00000077  8B 35 0000009B R			mov esi, auxanodos[1]
- 0000007D  E2 A0			loop L1
 					exit
- 0000007F  6A 00	   *	    push   +000000000h
- 00000081  E8 00000000 E   *	    call   ExitProcess
- 00000086			main2 ENDP
+ 00000064  6A 00	   *	    push   +000000000h
+ 00000066  E8 00000000 E   *	    call   ExitProcess
+ 0000006B				E3:
+ 0000006B  BA 00000059 R			mov edx, OFFSET digiten3
+ 00000070  E8 00000000 E			call WriteString
+ 00000075  E8 00000000 E			call Crlf
+ 0000007A  E8 00000000 E			call ReadInt
+ 0000007F  A3 00000008 R			mov Nododistancia[0],eax
+ 00000084  BA 00000072 R			mov edx, OFFSET digiten4
+ 00000089  E8 00000000 E			call WriteString
+ 0000008E  E8 00000000 E			call Crlf
+ 00000093  E8 00000000 E			call ReadInt
+ 00000098  A3 00000009 R			mov Nododistancia[1],eax
+ 0000009D  BB 00000008 R			mov ebx, OFFSET Nododistancia
+ 000000A2  89 9E 0000000C R			mov Nodcon[esi], ebx
+ 000000A8  46					inc esi
+ 000000A9  EB 96			jmp E4
+
+ 000000AB			main2 ENDP
 				END main2
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    11/06/17 17:08:37
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    11/06/17 18:46:48
 Project.asm						     Symbols 2 - 1
 
 
@@ -199,7 +207,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 000000AA Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000086 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000AB Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -306,9 +314,11 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main2  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000086 Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 0000001F _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 00000046 _TEXT	
+main2  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000AB Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000019 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 0000003F _TEXT	
+  E4 . . . . . . . . . . . . . .	L Near	 00000041 _TEXT	
+  E3 . . . . . . . . . . . . . .	L Near	 0000006B _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -535,7 +545,8 @@ auxanodos  . . . . . . . . . . .	DWord	 0000009A _DATA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-cantidad1  . . . . . . . . . . .	DWord	 00000000 _DATA	
+cantidad1  . . . . . . . . . . .	DWord	 00000004 _DATA	
+cantidad . . . . . . . . . . . .	DWord	 00000000 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 digiten2 . . . . . . . . . . . .	Byte	 00000032 _DATA	
 digiten3 . . . . . . . . . . . .	Byte	 00000059 _DATA	
